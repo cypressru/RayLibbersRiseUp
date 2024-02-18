@@ -109,6 +109,29 @@ int main(void)
     const int screenWidth = ATTR_DRMCST_WIDTH;
     const int screenHeight = ATTR_DRMCST_HEIGHT;
     SetConfigFlags(FLAG_MSAA_4X_HINT); //I don't know if anti aliasing is needed here
+    // Initialization for Fish Stuff
+
+    //define camera to look into our 3d world
+    Camera camera = { 0 };
+    camera.position = (Vector3){ 50.0f, 50.0f, 50.0f }; // Camera position
+    camera.target = (Vector3){ 0.0f, 10.0f, 0.0f };     // Camera looking at point
+    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.fovy = 45.0f;                                // Camera field-of-view Y
+    camera.projection = CAMERA_PERSPECTIVE;                   // Camera mode type
+
+    Model model = LoadModel("rd/fish.obj");                 // Load model
+    Texture2D texture = LoadTexture("rd/fish_texture.png"); // Load model texture
+    model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;            // Set map diffuse texture
+
+    Vector3 position = { 0.0f, 0.0f, 0.0f };                    // Set model position
+
+    BoundingBox bounds = GetMeshBoundingBox(model.meshes[0]);   // Set model bounds
+
+
+
+
+
+
 
     // Initialize KOS sound system
     snd_init();
@@ -222,7 +245,8 @@ int main(void)
                     {
                         // Update TITLE screen data here!
 
-                        framesCounter++;
+
+
 
                         if (IsGamepadButtonReleased(gamepad, GAMEPAD_BUTTON_MIDDLE_RIGHT))
                         {
@@ -396,8 +420,16 @@ int main(void)
 
                     case TITLE:
                     {
+                        UpdateCamera(&camera, CAMERA_FIRST_PERSON);
+                        ClearBackground(RAYWHITE);
+
+                        BeginMode3D(camera);
+                            DrawModel(model, position, 1.0f, WHITE);
+                            DrawGrid(20, 10.0f);
+                        EndMode3D();
+
+
                         // TODO: Draw TITLE screen here!
-                        DrawRectangle(0, 0, screenWidth, screenHeight, GREEN);
                         DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
                         DrawText("PRESS START to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
 
@@ -445,10 +477,10 @@ int main(void)
                     {
                         // TODO: Draw ENDING screen here!
                         DrawRectangle(0, 0, screenWidth, screenHeight, BLUE);
-                        DrawText(TextFormat("Score - %d", score), (screenWidth / 2) - (MeasureText(TextFormat("Score - %d", score), 30) / 2), (screenHeight / 2) - 40, 30, BLACK);
-                        DrawText(TextFormat("High Score - %d", highScore), (screenWidth / 2) - (MeasureText(TextFormat("High Score - %d", highScore), 30) / 2), (screenHeight / 2) + 10, 30, BLACK);
+                        DrawText(TextFormat("Score - %d", score), ((screenWidth / 2) - (MeasureText(TextFormat("Score - %d", score), 30) / 2)) + 25 - 28, (screenHeight / 2) - 40, 30, YELLOW);
+                        DrawText(TextFormat("High Score - %d", highScore), (screenWidth / 2) - (MeasureText(TextFormat("High Score - %d", highScore), 30) / 2), (screenHeight / 2) + 10, 30, YELLOW);
 
-                        DrawText("PRESS START to RETURN to TITLE SCREEN", 90, 360, 20, DARKBLUE);
+                        DrawText("PRESS START to RETURN to TITLE SCREEN", 90, 360, 20, YELLOW);
 
                     } break;
 
