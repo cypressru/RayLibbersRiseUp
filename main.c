@@ -108,19 +108,19 @@ int main(void)
     //Initialize Cool Variables and other such things
     const int screenWidth = ATTR_DRMCST_WIDTH;
     const int screenHeight = ATTR_DRMCST_HEIGHT;
-    SetConfigFlags(FLAG_MSAA_4X_HINT); //I don't know if anti aliasing is needed here
-    // Initialization for Fish Stuff
+    // Window Initialization
+    InitWindow(screenWidth, screenHeight, "Attempting to make a game :D" );
 
-    //define camera to look into our 3d world
+    // Define the camera to look into our 3d world
     Camera camera = { 0 };
-    camera.position = (Vector3){ 50.0f, 50.0f, 50.0f }; // Camera position
-    camera.target = (Vector3){ 0.0f, 10.0f, 0.0f };     // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = (Vector3){ 1.0f, 2.0f, 1.0f }; // Camera position
+    camera.up = (Vector3){ 0.0f, 0.5f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;                   // Camera mode type
+    camera.target = (Vector3){ 0.0f, 0.0};
 
-    Model model = LoadModel("rd/fish.obj");                 // Load model
-    Texture2D texture = LoadTexture("rd/fish_texture.png"); // Load model texture
+    Model model = LoadModel("rd/stool.obj");                 // Load model
+    Texture2D texture = LoadTexture("rd/stool_lores.png"); // Load model texture
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;            // Set map diffuse texture
 
     Vector3 position = { 0.0f, 0.0f, 0.0f };                    // Set model position
@@ -128,17 +128,11 @@ int main(void)
     BoundingBox bounds = GetMeshBoundingBox(model.meshes[0]);   // Set model bounds
 
 
-
-
-
-
-
     // Initialize KOS sound system
     snd_init();
     uint8_t volume = 128; // TODO this might fix sound, if not delete
 
-    // Window Initialization
-    InitWindow(screenWidth, screenHeight, "Attempting to make a game :D" );
+
 
     // load textures
     Texture2D texRayLogo = LoadTexture("rd/rayliblogo.png");
@@ -187,8 +181,7 @@ int main(void)
             bricks[j][i].active = true;
         }
     }
-    // STUFF FOR VMU I DONT UNDERSTAND
-    //TODO DIE
+    //  VMU STUFF
     maple_device_t * dev;
     dev = maple_enum_type (0, MAPLE_FUNC_LCD);
     load_bmp_vmu(vmu_lcd_bitmap, "/rd/ballbuster1.bmp");
@@ -244,6 +237,8 @@ int main(void)
                     case TITLE:  // TODO - Make a real title screen
                     {
                         // Update TITLE screen data here!
+                        UpdateCamera(&camera, CAMERA_PERSPECTIVE); //model stuff
+
 
 
 
@@ -420,12 +415,13 @@ int main(void)
 
                     case TITLE:
                     {
-                        UpdateCamera(&camera, CAMERA_FIRST_PERSON);
-                        ClearBackground(RAYWHITE);
+                        ClearBackground(PURPLE);
+
 
                         BeginMode3D(camera);
-                            DrawModel(model, position, 1.0f, WHITE);
-                            DrawGrid(20, 10.0f);
+
+                            DrawModel(model, position, 1.0f, WHITE);        // Draw 3d model with texture
+
                         EndMode3D();
 
 
